@@ -88,7 +88,9 @@ def validate_tree(root: Path) -> None:
                 raise PublishError(f"Symbolic links are not allowed: {path}")
         for name in files:
             path = current_path / name
-            if path.is_symlink() or not path.is_file():
+            if path.is_symlink():
+                raise PublishError(f"Symbolic links are not allowed: {path}")
+            if not path.is_file():
                 raise PublishError(f"Only regular files are allowed: {path}")
 
 
