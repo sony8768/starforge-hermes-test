@@ -115,3 +115,26 @@ The receiver:
 - rejects empty transfers;
 - records the downloaded archive SHA-256;
 - invokes the North Star importer only after the transfer completes.
+
+## Publish a completed result on the Hermes server
+
+`server/publish_hermes_result.py` is the trusted boundary between a writable
+Hermes job directory and the read-only SFTP result area.
+
+Install it on Tencent Cloud:
+
+```bash
+cd /path/to/starforge-hermes-test
+sudo bash server/install-result-publisher.sh
+```
+
+After Hermes completes a task:
+
+```bash
+sudo /usr/local/bin/starforge-publish-result SF-20260719-0002
+```
+
+The publisher independently validates task identity, lease identity, report
+status, acceptance results, base Commit, reported hashes, regular-file types,
+and the absence of symbolic links. It refuses to overwrite an existing result.
+The final archive is written atomically as `root:starforgepull` with mode `640`.
