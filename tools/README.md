@@ -74,3 +74,44 @@ sudo tar -czf /home/ubuntu/SF-TASK-result.tar.gz \
 
 The importer rejects incomplete archives instead of trying to infer missing
 task authority from the patch.
+
+## Receive a Hermes result from Tencent Cloud
+
+`Receive-HermesResult.ps1` downloads one task result over SSH and immediately
+passes it to the importer. It requires key-based authentication and refuses
+interactive password prompts.
+
+The Tencent Cloud host key must already exist in the Windows
+`known_hosts` file. Strict host-key checking is always enabled.
+
+### Download and import locally
+
+```powershell
+.\tools\Receive-HermesResult.ps1 `
+  -TaskId "SF-20260719-0002" `
+  -ServerHost "122.51.78.189" `
+  -IdentityFile "C:\Users\admin\.ssh\tencent_cloud" `
+  -RepoPath "C:\Users\admin\Desktop\starforge-hermes-test"
+```
+
+### Download, import, push, and create a draft PR
+
+```powershell
+.\tools\Receive-HermesResult.ps1 `
+  -TaskId "SF-20260719-0002" `
+  -ServerHost "122.51.78.189" `
+  -IdentityFile "C:\Users\admin\.ssh\tencent_cloud" `
+  -RepoPath "C:\Users\admin\Desktop\starforge-hermes-test" `
+  -Publish
+```
+
+The receiver:
+
+- accepts only a constrained StarForge task ID, SSH username, and hostname;
+- checks that the remote result is readable before transfer;
+- uses `BatchMode=yes`, so automation cannot fall back to passwords;
+- enforces known-host verification;
+- downloads to a temporary `.partial` file;
+- rejects empty transfers;
+- records the downloaded archive SHA-256;
+- invokes the North Star importer only after the transfer completes.
