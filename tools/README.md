@@ -138,3 +138,13 @@ The publisher independently validates task identity, lease identity, report
 status, acceptance results, base Commit, reported hashes, regular-file types,
 and the absence of symbolic links. It refuses to overwrite an existing result.
 The final archive is written atomically as `root:starforgepull` with mode `640`.
+
+The installer also deploys a Hermes gateway hook for the official `agent:end`
+event. After each completed gateway turn, the hook scans `SF-*` job directories
+and invokes the trusted publisher only when all required artifacts exist.
+Successful jobs receive a `.starforge-published` marker, so subsequent turns do
+not republish them. Hook failures are written to:
+
+```text
+/home/hermes/.hermes/logs/starforge-publish-hook.jsonl
+```

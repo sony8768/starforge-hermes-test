@@ -1,0 +1,4 @@
+name: starforge-result-publisher
+description: Publish completed StarForge jobs through the trusted result publisher
+events:
+  - agent:end
