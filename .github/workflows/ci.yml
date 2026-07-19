@@ -1,0 +1,41 @@
+name: .NET CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dotnet-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up .NET 8
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore StarForge.HermesTest.sln
+
+      - name: Build
+        run: dotnet build StarForge.HermesTest.sln --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test StarForge.HermesTest.sln --configuration Release --no-build --verbosity normal
