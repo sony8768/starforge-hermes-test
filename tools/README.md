@@ -77,9 +77,9 @@ task authority from the patch.
 
 ## Receive a Hermes result from Tencent Cloud
 
-`Receive-HermesResult.ps1` downloads one task result over SSH and immediately
-passes it to the importer. It requires key-based authentication and refuses
-interactive password prompts.
+`Receive-HermesResult.ps1` downloads one task result through a restricted SFTP
+account and immediately passes it to the importer. It requires key-based
+authentication and refuses interactive password prompts.
 
 The Tencent Cloud host key must already exist in the Windows
 `known_hosts` file. Strict host-key checking is always enabled.
@@ -108,9 +108,9 @@ The Tencent Cloud host key must already exist in the Windows
 The receiver:
 
 - accepts only a constrained StarForge task ID, SSH username, and hostname;
-- checks that the remote result is readable before transfer;
 - uses `BatchMode=yes`, so automation cannot fall back to passwords;
 - enforces known-host verification;
+- reads only from the fixed chroot path `/results/<task-id>-result.tar.gz`;
 - downloads to a temporary `.partial` file;
 - rejects empty transfers;
 - records the downloaded archive SHA-256;

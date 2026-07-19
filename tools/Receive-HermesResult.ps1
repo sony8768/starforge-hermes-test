@@ -73,8 +73,7 @@ if (-not (Test-Path -LiteralPath $importer -PathType Leaf)) {
     throw "Hermes result importer is missing: $importer"
 }
 
-$scp = Resolve-Tool -Name "scp" -FallbackPaths @("C:\Windows\System32\OpenSSH\scp.exe")
-$ssh = Resolve-Tool -Name "ssh" -FallbackPaths @("C:\Windows\System32\OpenSSH\ssh.exe")
+$sftp = Resolve-Tool -Name "sftp" -FallbackPaths @("C:\Windows\System32\OpenSSH\sftp.exe")
 
 $identity = $null
 if ($IdentityFile) {
@@ -86,6 +85,7 @@ $destinationRoot = (Resolve-Path -LiteralPath $DestinationDirectory).Path
 $archiveName = "$TaskId-result.tar.gz"
 $destination = Join-Path $destinationRoot $archiveName
 $partial = "$destination.partial"
+$batchFile = "$destination.sftp-batch"
 
 if ((Test-Path -LiteralPath $destination) -and -not $ForceDownload) {
     throw "Result archive already exists. Use -ForceDownload to replace it: $destination"
@@ -95,40 +95,33 @@ if (Test-Path -LiteralPath $partial) {
     Remove-Item -LiteralPath $partial -Force
 }
 
-$remotePath = "/home/$RemoteUser/$archiveName"
-$remoteSpec = "$RemoteUser@$ServerHost`:$remotePath"
+$remotePath = "/results/$archiveName"
+$sftpDestination = $partial.Replace("\", "/")
 
 try {
-    $remoteCheckArguments = @(
-        "-p", "$Port",
-        "-o", "BatchMode=yes",
-        "-o", "StrictHostKeyChecking=yes",
-        "-o", "ConnectTimeout=15"
+    $batchContent = "get `"$remotePath`" `"$sftpDestination`"`n"
+    [IO.File]::WriteAllText(
+        $batchFile,
+        $batchContent,
+        [Text.UTF8Encoding]::new($false)
     )
-    if ($identity) {
-        $remoteCheckArguments += @("-i", $identity)
-    }
-    $remoteCheckArguments += @(
-        "$RemoteUser@$ServerHost",
-        "test -f '$remotePath' -a -r '$remotePath'"
-    )
-    Invoke-External -FilePath $ssh -Arguments $remoteCheckArguments
 
-    $scpArguments = @(
+    $sftpArguments = @(
         "-P", "$Port",
+        "-b", $batchFile,
         "-o", "BatchMode=yes",
         "-o", "StrictHostKeyChecking=yes",
         "-o", "ConnectTimeout=15"
     )
     if ($identity) {
-        $scpArguments += @("-i", $identity)
+        $sftpArguments += @("-i", $identity)
     }
-    $scpArguments += @($remoteSpec, $partial)
+    $sftpArguments += @("$RemoteUser@$ServerHost")
 
-    Invoke-External -FilePath $scp -Arguments $scpArguments
+    Invoke-External -FilePath $sftp -Arguments $sftpArguments
 
     if (-not (Test-Path -LiteralPath $partial -PathType Leaf)) {
-        throw "SCP completed without creating the expected local file."
+        throw "SFTP completed without creating the expected local file."
     }
     if ((Get-Item -LiteralPath $partial).Length -eq 0) {
         throw "Downloaded archive is empty."
@@ -156,5 +149,8 @@ try {
 finally {
     if (Test-Path -LiteralPath $partial) {
         Remove-Item -LiteralPath $partial -Force
+    }
+    if (Test-Path -LiteralPath $batchFile) {
+        Remove-Item -LiteralPath $batchFile -Force
     }
 }
