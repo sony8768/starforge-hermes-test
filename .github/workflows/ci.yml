@@ -41,7 +41,11 @@ jobs:
         run: dotnet test StarForge.HermesTest.sln --configuration Release --no-build --verbosity normal
 
       - name: Validate publisher syntax
-        run: python3 -m py_compile server/publish_hermes_result.py
+        run: |
+          python3 -m py_compile server/publish_hermes_result.py
+          python3 -m py_compile server/hermes-hook/handler.py
 
       - name: Test result publisher
-        run: python3 -m unittest -v server/test_publish_hermes_result.py
+        run: |
+          python3 -m unittest -v server/test_publish_hermes_result.py
+          python3 -m unittest -v server/test_publish_hook.py
