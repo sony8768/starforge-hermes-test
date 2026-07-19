@@ -1,0 +1,6 @@
+@StarForge.HermesTest.Api_HostAddress = http://localhost:5127
+
+GET {{StarForge.HermesTest.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

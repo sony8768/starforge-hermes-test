@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StarForge.HermesTest.Api", "StarForge.HermesTest.Api\StarForge.HermesTest.Api.csproj", "{3713AAE5-6F95-47D9-BEEC-0A97D17C005A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StarForge.HermesTest.Tests", "StarForge.HermesTest.Tests\StarForge.HermesTest.Tests.csproj", "{B0984788-32E6-494E-8B99-E9C685562BE3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3713AAE5-6F95-47D9-BEEC-0A97D17C005A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3713AAE5-6F95-47D9-BEEC-0A97D17C005A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3713AAE5-6F95-47D9-BEEC-0A97D17C005A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3713AAE5-6F95-47D9-BEEC-0A97D17C005A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0984788-32E6-494E-8B99-E9C685562BE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0984788-32E6-494E-8B99-E9C685562BE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0984788-32E6-494E-8B99-E9C685562BE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0984788-32E6-494E-8B99-E9C685562BE3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
